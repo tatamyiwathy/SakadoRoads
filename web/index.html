@@ -194,6 +194,58 @@
                 </div>
             `;
         }
+
+        // 2点間の距離を計算する関数
+        function latlngDistance(lat1, lng1, lat2, lng2) {
+            return L.latLng(lat1, lng1)
+                .distanceTo(L.latLng(lat2, lng2));
+        }
+
+        // 指定した中心座標に最も近い道路を検索する関数
+        function findRoadAtCenter(roadData, center, threshold) {
+            let nearestRoad = null;
+            let nearestDistance = Infinity;
+
+            for (const road of roadData.features) {
+                const geometry = road.geometry;
+
+                if (geometry.type === "LineString") {
+                    for (const coord of geometry.coordinates) {
+                        const distance = latlngDistance(
+                            center.lat,
+                            center.lng,
+                            coord[1],
+                            coord[0]
+                        );
+
+                        if (distance < nearestDistance) {
+                            nearestDistance = distance;
+                            nearestRoad = road;
+                        }
+                    }
+                }
+                else if (geometry.type === "MultiLineString") {
+                    for (const line of geometry.coordinates) {
+                        for (const coord of line) {
+                            const distance = latlngDistance(
+                                center.lat,
+                                center.lng,
+                                coord[1],
+                                coord[0]
+                            );
+
+                            if (distance < nearestDistance) {
+                                nearestDistance = distance;
+                                nearestRoad = road;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return nearestDistance <= threshold ? nearestRoad : null;
+        }
+
         async function loadRoads() {
             const response = await fetch(roaddataset);
             const roadData = await response.json();
@@ -284,6 +336,13 @@
             }).addTo(map);
 
         }
+
+        function updateCenterRoad() {
+            console.log("Center road updated");
+        }
+        // 地図が移動するたびに呼ばれる
+        map.on("moveend", updateCenterRoad);
+
         loadRoads();
 
         // L.geoJSON(roadData, {
