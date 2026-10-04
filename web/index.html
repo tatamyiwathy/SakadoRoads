@@ -187,6 +187,7 @@
             const response = await fetch(roaddataset);
             const roadData = await response.json();
 
+            const weight = 6;
             L.geoJSON(roadData, {
 
                 style: function (feature) {
@@ -196,37 +197,37 @@
                         case 1: // 3m未満
                             return {
                                 color: rgb_to_html(pickColor(h)),
-                                weight: 3
+                                weight: weight
                             };
                         case 2: // 3m-5.5m未満
                             return {
                                 color: rgb_to_html(pickColor(h)),
-                                weight: 3
+                                weight: weight
                             };
                         case 3: // 5.5m-13m未満
                             return {
                                 color: rgb_to_html(pickColor(h)),
-                                weight: 3
+                                weight: weight
                             };
                         case 4: // 13m-19.5m未満
                             return {
                                 color: rgb_to_html(pickColor(h)),
-                                weight: 3
+                                weight: weight
                             };
                         case 5: // 19.5m以上
                             return {
                                 color: rgb_to_html(pickColor(h)),
-                                weight: 3
+                                weight: weight
                             };
                         case 6: // 未分類
                             return {
                                 color: rgb_to_html(pickColor(h)),
-                                weight: 3
+                                weight: weight
                             };
                         default:
                             return {
                                 color: rgb_to_html(pickColor(h)),
-                                weight: 3
+                                weight: weight
                             };
                     }
                     return {
