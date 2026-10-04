@@ -22,6 +22,7 @@
                 国土交通省国土数値情報ダウンロードサイト
             </a>
         </div>
+        <div id="map-reticle">+</div>
     </div>
     <script>
         // 道路データのパス
@@ -182,12 +183,22 @@
                     return "不明";
             }
         }
-
+        function showRoadDetails(feature) {
+            return `
+                <div>
+                    <b>道路情報</b><br>
+                    種別：${get_roadtype(feature.properties.N13_002)}<br>
+                    道路分類：${get_roadcategory(feature.properties.N13_003)}<br>
+                    道路状態：${get_roadstate(feature.properties.N13_004)}<br>
+                    幅員区分：${get_roadwidth(feature.properties.N13_006)}<br>
+                </div>
+            `;
+        }
         async function loadRoads() {
             const response = await fetch(roaddataset);
             const roadData = await response.json();
 
-            const weight = 6;
+            const weight = 3;
             L.geoJSON(roadData, {
 
                 style: function (feature) {
@@ -267,15 +278,7 @@
                     // });
                     layer.on('click', function (e) {
                         // クリックした道路の情報を表示
-                        e.target.bindPopup(`
-                            <div>
-                                <b>道路情報</b><br>
-                                種別：${get_roadtype(feature.properties.N13_002)}<br>
-                                道路分類：${get_roadcategory(feature.properties.N13_003)}<br>
-                                道路状態：${get_roadstate(feature.properties.N13_004)}<br>
-                                幅員区分：${get_roadwidth(feature.properties.N13_006)}<br>
-                            </div>
-                        `).openPopup();
+                        e.target.bindPopup(showRoadDetails(feature)).openPopup();
                     });
                 }
             }).addTo(map);

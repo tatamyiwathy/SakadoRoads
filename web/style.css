@@ -40,3 +40,28 @@
 
     font-size: 12px;
 }
+
+#map-reticle {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    #map-reticle {
+        display: block;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+
+        width: 32px;
+        height: 32px;
+
+        text-align: center;
+        line-height: 28px;
+        font-size: 28px;
+        font-weight: bold;
+
+        pointer-events: none;
+    }
+}
