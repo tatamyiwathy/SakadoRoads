@@ -236,33 +236,45 @@
                 },
 
                 onEachFeature: function (feature, layer) {
-                    layer.on({
-                        mouseover: function (e) {
-                            // マウスオーバーした道路を強調
-                            e.target.setStyle({
-                                weight: 6,
-                            });
+                    // layer.on({
+                    //     mouseover: function (e) {
+                    //         // マウスオーバーした道路を強調
+                    //         e.target.setStyle({
+                    //             weight: 6,
+                    //         });
 
-                            // ポップアップ表示
-                            e.target.bindPopup(`
-                                <div>
-                                    <b>道路情報</b><br>
-                                    種別：${get_roadtype(feature.properties.N13_002)}<br>
-                                    道路分類：${get_roadcategory(feature.properties.N13_003)}<br>
-                                    道路状態：${get_roadstate(feature.properties.N13_004)}<br>
-                                    幅員区分：${get_roadwidth(feature.properties.N13_006)}<br>
-                                </div>
-                            `).openPopup();
-                        },
+                    //         // ポップアップ表示
+                    //         e.target.bindPopup(`
+                    //             <div>
+                    //                 <b>道路情報</b><br>
+                    //                 種別：${get_roadtype(feature.properties.N13_002)}<br>
+                    //                 道路分類：${get_roadcategory(feature.properties.N13_003)}<br>
+                    //                 道路状態：${get_roadstate(feature.properties.N13_004)}<br>
+                    //                 幅員区分：${get_roadwidth(feature.properties.N13_006)}<br>
+                    //             </div>
+                    //         `).openPopup();
+                    //     },
 
-                        mouseout: function (e) {
-                            // 元の表示に戻す
-                            e.target.setStyle({
-                                weight: 3,
-                            });
+                    //     mouseout: function (e) {
+                    //         // 元の表示に戻す
+                    //         e.target.setStyle({
+                    //             weight: 3,
+                    //         });
 
-                            e.target.closePopup();
-                        }
+                    //         e.target.closePopup();
+                    //     }
+                    // });
+                    layer.on('click', function (e) {
+                        // クリックした道路の情報を表示
+                        e.target.bindPopup(`
+                            <div>
+                                <b>道路情報</b><br>
+                                種別：${get_roadtype(feature.properties.N13_002)}<br>
+                                道路分類：${get_roadcategory(feature.properties.N13_003)}<br>
+                                道路状態：${get_roadstate(feature.properties.N13_004)}<br>
+                                幅員区分：${get_roadwidth(feature.properties.N13_006)}<br>
+                            </div>
+                        `).openPopup();
                     });
                 }
             }).addTo(map);
