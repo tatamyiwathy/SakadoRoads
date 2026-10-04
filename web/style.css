@@ -40,3 +40,10 @@
 
     font-size: 12px;
 }
+
+@media (max-width: 768px) {
+  .leaflet-control-zoom-in, 
+  .leaflet-control-zoom-out {
+    font-size: 22px !important;
+  }
+}
