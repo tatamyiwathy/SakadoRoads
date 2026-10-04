@@ -1,0 +1,305 @@
+<html lang="ja">
+
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <title>坂戸市道路幅員マップ</title>
+</head>
+
+<body>
+    <div class="map-container">
+        <div id="map" style="width: 100%; height: 100vh;"></div>
+
+        <!-- 地図の上に重ねる矩形（テキストボックス） -->
+        <div class="map-overlay">
+            データ出典：
+            <a href="https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N13-2024.html" target="_blank"
+                rel="noopener noreferrer">
+                国土交通省国土数値情報ダウンロードサイト
+            </a>
+        </div>
+    </div>
+    <script>
+        // 道路データのパス
+        const roaddataset = "./resources/sakado_roads.json";
+        // 地図の初期化
+        const map = L.map("map").setView([35.9572819, 139.4004482], 15);
+
+        // 地理院タイルを使用する
+        L.tileLayer(
+            "https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png",
+            {
+                attribution: "<a href=\"https://maps.gsi.go.jp/development/ichiran.html\">地理院タイル</a>",
+                opacity: 0.5
+
+            }
+        ).addTo(map);
+
+
+
+        // const response = await fetch("./resources/N03-20260101_11_GML/N03-20260101_11.geojson");
+        // const roadData = await response.json();
+
+
+        /**
+         * 円周上の角度に応じて R->G->B のグラデーション色を返す関数
+         * @param {number} angle - 0～2πの範囲の角度（ラジアン）
+         * @returns {Array<number>} [b, g, r, a] の配列（各値は 0.0～1.0）
+         */
+        function pickColor(angle) {
+            // 角度を 0～1 の範囲に正規化
+            const normalizedAngle = (angle % (Math.PI * 2)) / (Math.PI * 2);
+
+            // 0～1 の範囲を 3分割
+            // 0.0～0.33: R(1,0,0) → G(0,1,0)
+            // 0.33～0.67: G(0,1,0) → B(0,0,1)
+            // 0.67～1.0: B(0,0,1) → R(1,0,0)
+
+            let r, g, b;
+
+            if (normalizedAngle < 0.333) {
+                // R → G
+                const t = normalizedAngle / 0.333;
+                r = 1.0 - t;
+                g = t;
+                b = 0.0;
+            } else if (normalizedAngle < 0.667) {
+                // G → B
+                const t = (normalizedAngle - 0.333) / 0.334;
+                r = 0.0;
+                g = 1.0 - t;
+                b = t;
+            } else {
+                // B → R
+                const t = (normalizedAngle - 0.667) / 0.333;
+                r = t;
+                g = 0.0;
+                b = 1.0 - t;
+            }
+
+            return [b, g, r, 1.0];
+        }
+
+        function rgb_to_html(rgba) {
+            const r = Math.round(rgba[0] * 255);    //B成分をR成分として扱う
+            const g = Math.round(rgba[1] * 255);
+            const b = Math.round(rgba[2] * 255);
+            return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
+        }
+
+        function hsv_to_html(h) {
+            h %= 360;
+
+            let r, g, b;
+            if (h < 60) {
+                r = 255; g = Math.round(h / 60 * 255); b = 0;
+            } else if (h < 120) {
+                r = Math.round((120 - h) / 60 * 255); g = 255; b = 0;
+            } else if (h < 180) {
+                r = 0; g = 255; b = Math.round((h - 120) / 60 * 255);
+            } else if (h < 240) {
+                r = 0; g = Math.round((240 - h) / 60 * 255); b = 255;
+            } else if (h < 300) {
+                r = Math.round((h - 240) / 60 * 255); g = 0; b = 255;
+            } else {
+                r = 255; g = 0; b = Math.round((360 - h) / 60 * 255);
+            }
+
+            return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
+        }
+
+
+        function get_roadtype(code) {
+            console.log("Road type code:", code);
+            switch (Number(code)) {
+                case 1:
+                    return "通常部";
+                case 2:
+                    return "庭園部";
+                case 3:
+                    return "徒歩道";
+                case 4:
+                    return "石段";
+                default:
+                    return "不明";
+            }
+        }
+
+
+        function get_roadcategory(code) {
+            switch (Number(code)) {
+                case 1:
+                    return "国道";
+                case 2:
+                    return "都道府県道";
+                case 3:
+                    return "市区町村道等";
+                case 4:
+                    return "高速自動車国道等";
+                case 5:
+                    return "その他";
+                default:
+                    return "不明";
+            }
+        }
+
+        function get_roadstate(code) {
+            switch (Number(code)) {
+                case 1:
+                    return "通常部";
+                case 2:
+                    return "橋・高架";
+                case 3:
+                    return "トンネル";
+                case 4:
+                    return "雪囲い";
+                case 5:
+                    return "建設中";
+                case 6:
+                    return "その他";
+                default:
+                    return "不明";
+            }
+        }
+
+        function get_roadwidth(code) {
+            switch (Number(code)) {
+                case 1:
+                    return "3m未満";
+                case 2:
+                    return "3m-5.5m未満";
+                case 3:
+                    return "5.5m-13m未満";
+                case 4:
+                    return "13m-19.5m未満";
+                case 5:
+                    return "19.5m以上";
+                default:
+                    return "不明";
+            }
+        }
+
+        async function loadRoads() {
+            const response = await fetch(roaddataset);
+            const roadData = await response.json();
+
+            L.geoJSON(roadData, {
+
+                style: function (feature) {
+                    const code = Number(feature.properties.N13_006)
+                    const h = (code - 1) * 60;
+                    switch (code) {
+                        case 1: // 3m未満
+                            return {
+                                color: rgb_to_html(pickColor(h)),
+                                weight: 3
+                            };
+                        case 2: // 3m-5.5m未満
+                            return {
+                                color: rgb_to_html(pickColor(h)),
+                                weight: 3
+                            };
+                        case 3: // 5.5m-13m未満
+                            return {
+                                color: rgb_to_html(pickColor(h)),
+                                weight: 3
+                            };
+                        case 4: // 13m-19.5m未満
+                            return {
+                                color: rgb_to_html(pickColor(h)),
+                                weight: 3
+                            };
+                        case 5: // 19.5m以上
+                            return {
+                                color: rgb_to_html(pickColor(h)),
+                                weight: 3
+                            };
+                        case 6: // 未分類
+                            return {
+                                color: rgb_to_html(pickColor(h)),
+                                weight: 3
+                            };
+                        default:
+                            return {
+                                color: rgb_to_html(pickColor(h)),
+                                weight: 3
+                            };
+                    }
+                    return {
+                        color: "#000000",
+                        weight: 3
+                    };
+                },
+
+                onEachFeature: function (feature, layer) {
+                    layer.on({
+                        mouseover: function (e) {
+                            // マウスオーバーした道路を強調
+                            e.target.setStyle({
+                                weight: 6,
+                            });
+
+                            // ポップアップ表示
+                            e.target.bindPopup(`
+                                <div>
+                                    <b>道路情報</b><br>
+                                    種別：${get_roadtype(feature.properties.N13_002)}<br>
+                                    道路分類：${get_roadcategory(feature.properties.N13_003)}<br>
+                                    道路状態：${get_roadstate(feature.properties.N13_004)}<br>
+                                    幅員区分：${get_roadwidth(feature.properties.N13_006)}<br>
+                                </div>
+                            `).openPopup();
+                        },
+
+                        mouseout: function (e) {
+                            // 元の表示に戻す
+                            e.target.setStyle({
+                                weight: 3,
+                            });
+
+                            e.target.closePopup();
+                        }
+                    });
+                }
+            }).addTo(map);
+
+        }
+        loadRoads();
+
+        // L.geoJSON(roadData, {
+        //     style: function (feature) {
+        //         return {
+        //             color: "#ff0000",
+        //             weight: 3
+        //         };
+        //     }
+        // }).addTo(map);     
+
+        const legend = L.control({ position: "bottomright" });
+
+        legend.onAdd = function (map) {
+            const div = L.DomUtil.create("div", "road-width-legend");
+
+            div.innerHTML = `
+        <h4>道路幅</h4>
+        <div><span class="color-box" style="background:${rgb_to_html(pickColor(0))}"></span> ${get_roadwidth(1)}</div>
+        <div><span class="color-box" style="background:${rgb_to_html(pickColor(60))}"></span> ${get_roadwidth(2)}</div>
+        <div><span class="color-box" style="background:${rgb_to_html(pickColor(120))}"></span> ${get_roadwidth(3)}</div>
+        <div><span class="color-box" style="background:${rgb_to_html(pickColor(180))}"></span> ${get_roadwidth(4)}</div>
+        <div><span class="color-box" style="background:${rgb_to_html(pickColor(240))}"></span> ${get_roadwidth(5)}</div>
+        <div><span class="color-box" style="background:${rgb_to_html(pickColor(300))}"></span> ${get_roadwidth(6)}</div>
+    `;
+
+            return div;
+        };
+
+        legend.addTo(map);
+
+        console.log(`rgb = ${hsv_to_html(180)}`)
+    </script>
+
+</body>
+
+</html>
