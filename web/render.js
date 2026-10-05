@@ -323,22 +323,28 @@ loadRoads();
 //     }
 // }).addTo(map);     
 
-const legend = L.control({ position: "bottomright" });
+//  凡例の表示
+function showLegend() {
+    const legend = L.control({ position: "bottomright" });
 
-legend.onAdd = function (map) {
-    const div = L.DomUtil.create("div", "road-width-legend");
+    legend.onAdd = function (map) {
+        const div = L.DomUtil.create("div", "road-width-legend");
 
-    div.innerHTML = `
-        <h4>道路幅</h4>
-        <div><span class="color-box" style="background:${rgb_to_html(pickColor(0))}"></span> ${get_roadwidth(1)}</div>
-        <div><span class="color-box" style="background:${rgb_to_html(pickColor(60))}"></span> ${get_roadwidth(2)}</div>
-        <div><span class="color-box" style="background:${rgb_to_html(pickColor(120))}"></span> ${get_roadwidth(3)}</div>
-        <div><span class="color-box" style="background:${rgb_to_html(pickColor(180))}"></span> ${get_roadwidth(4)}</div>
-        <div><span class="color-box" style="background:${rgb_to_html(pickColor(240))}"></span> ${get_roadwidth(5)}</div>
-        <div><span class="color-box" style="background:${rgb_to_html(pickColor(300))}"></span> ${get_roadwidth(6)}</div>
-    `;
+        div.innerHTML = `
+            <h4>道路幅</h4>
+            <div><span class="color-box" style="background:${rgb_to_html(pickColor(0))}"></span> ${get_roadwidth(1)}</div>
+            <div><span class="color-box" style="background:${rgb_to_html(pickColor(60))}"></span> ${get_roadwidth(2)}</div>
+            <div><span class="color-box" style="background:${rgb_to_html(pickColor(120))}"></span> ${get_roadwidth(3)}</div>
+            <div><span class="color-box" style="background:${rgb_to_html(pickColor(180))}"></span> ${get_roadwidth(4)}</div>
+            <div><span class="color-box" style="background:${rgb_to_html(pickColor(240))}"></span> ${get_roadwidth(5)}</div>
+            <div><span class="color-box" style="background:${rgb_to_html(pickColor(300))}"></span> ${get_roadwidth(6)}</div>
+        `;
 
-    return div;
-};
+        return div;
+    };
 
-legend.addTo(map);
+    legend.addTo(map);
+}
+
+showLegend();
+
