@@ -54,36 +54,14 @@ function pickColor(angle) {
     return [b, g, r, 1.0];
 }
 
-function rgb_to_html(rgba) {
+function rgbToColorCode(rgba) {
     const r = Math.round(rgba[0] * 255);    //B成分をR成分として扱う
     const g = Math.round(rgba[1] * 255);
     const b = Math.round(rgba[2] * 255);
     return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
 }
 
-function hsv_to_html(h) {
-    h %= 360;
-
-    let r, g, b;
-    if (h < 60) {
-        r = 255; g = Math.round(h / 60 * 255); b = 0;
-    } else if (h < 120) {
-        r = Math.round((120 - h) / 60 * 255); g = 255; b = 0;
-    } else if (h < 180) {
-        r = 0; g = 255; b = Math.round((h - 120) / 60 * 255);
-    } else if (h < 240) {
-        r = 0; g = Math.round((240 - h) / 60 * 255); b = 255;
-    } else if (h < 300) {
-        r = Math.round((h - 240) / 60 * 255); g = 0; b = 255;
-    } else {
-        r = 255; g = 0; b = Math.round((360 - h) / 60 * 255);
-    }
-
-    return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
-}
-
-
-function get_roadtype(code) {
+function getRoadType(code) {
     console.log("Road type code:", code);
     switch (Number(code)) {
         case 1:
@@ -100,7 +78,7 @@ function get_roadtype(code) {
 }
 
 
-function get_roadcategory(code) {
+function getRoadCategory(code) {
     switch (Number(code)) {
         case 1:
             return "国道";
@@ -117,7 +95,7 @@ function get_roadcategory(code) {
     }
 }
 
-function get_roadstate(code) {
+function getRoadState(code) {
     switch (Number(code)) {
         case 1:
             return "通常部";
@@ -136,7 +114,7 @@ function get_roadstate(code) {
     }
 }
 
-function get_roadwidth(code) {
+function getRoadWidth(code) {
     switch (Number(code)) {
         case 1:
             return "3m未満";
@@ -156,10 +134,10 @@ function showRoadDetails(feature) {
     return `
                 <div>
                     <b>道路情報</b><br>
-                    種別：${get_roadtype(feature.properties.N13_002)}<br>
-                    道路分類：${get_roadcategory(feature.properties.N13_003)}<br>
-                    道路状態：${get_roadstate(feature.properties.N13_004)}<br>
-                    幅員区分：${get_roadwidth(feature.properties.N13_006)}<br>
+                    種別：${getRoadType(feature.properties.N13_002)}<br>
+                    道路分類：${getRoadCategory(feature.properties.N13_003)}<br>
+                    道路状態：${getRoadState(feature.properties.N13_004)}<br>
+                    幅員区分：${getRoadWidth(feature.properties.N13_006)}<br>
                 </div>
             `;
 }
@@ -228,37 +206,37 @@ async function loadRoads() {
             switch (code) {
                 case 1: // 3m未満
                     return {
-                        color: rgb_to_html(pickColor(angle)),
+                        color: rgbToColorCode(pickColor(angle)),
                         weight: weight
                     };
                 case 2: // 3m-5.5m未満
                     return {
-                        color: rgb_to_html(pickColor(angle)),
+                        color: rgbToColorCode(pickColor(angle)),
                         weight: weight
                     };
                 case 3: // 5.5m-13m未満
                     return {
-                        color: rgb_to_html(pickColor(angle)),
+                        color: rgbToColorCode(pickColor(angle)),
                         weight: weight
                     };
                 case 4: // 13m-19.5m未満
                     return {
-                        color: rgb_to_html(pickColor(angle)),
+                        color: rgbToColorCode(pickColor(angle)),
                         weight: weight
                     };
                 case 5: // 19.5m以上
                     return {
-                        color: rgb_to_html(pickColor(angle)),
+                        color: rgbToColorCode(pickColor(angle)),
                         weight: weight
                     };
                 case 6: // 未分類
                     return {
-                        color: rgb_to_html(pickColor(angle)),
+                        color: rgbToColorCode(pickColor(angle)),
                         weight: weight
                     };
                 default:
                     return {
-                        color: rgb_to_html(pickColor(angle)),
+                        color: rgbToColorCode(pickColor(angle)),
                         weight: weight
                     };
             }
@@ -332,12 +310,12 @@ function showLegend() {
 
         div.innerHTML = `
             <h4>道路幅</h4>
-            <div><span class="color-box" style="background:${rgb_to_html(pickColor(0))}"></span> ${get_roadwidth(1)}</div>
-            <div><span class="color-box" style="background:${rgb_to_html(pickColor(60))}"></span> ${get_roadwidth(2)}</div>
-            <div><span class="color-box" style="background:${rgb_to_html(pickColor(120))}"></span> ${get_roadwidth(3)}</div>
-            <div><span class="color-box" style="background:${rgb_to_html(pickColor(180))}"></span> ${get_roadwidth(4)}</div>
-            <div><span class="color-box" style="background:${rgb_to_html(pickColor(240))}"></span> ${get_roadwidth(5)}</div>
-            <div><span class="color-box" style="background:${rgb_to_html(pickColor(300))}"></span> ${get_roadwidth(6)}</div>
+            <div><span class="color-box" style="background:${rgbToColorCode(pickColor(0))}"></span> ${getRoadWidth(1)}</div>
+            <div><span class="color-box" style="background:${rgbToColorCode(pickColor(60))}"></span> ${getRoadWidth(2)}</div>
+            <div><span class="color-box" style="background:${rgbToColorCode(pickColor(120))}"></span> ${getRoadWidth(3)}</div>
+            <div><span class="color-box" style="background:${rgbToColorCode(pickColor(180))}"></span> ${getRoadWidth(4)}</div>
+            <div><span class="color-box" style="background:${rgbToColorCode(pickColor(240))}"></span> ${getRoadWidth(5)}</div>
+            <div><span class="color-box" style="background:${rgbToColorCode(pickColor(300))}"></span> ${getRoadWidth(6)}</div>
         `;
 
         return div;
