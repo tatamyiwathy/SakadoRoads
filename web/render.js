@@ -15,10 +15,6 @@ L.tileLayer(
 
 
 
-// const response = await fetch("./resources/N03-20260101_11_GML/N03-20260101_11.geojson");
-// const roadData = await response.json();
-
-
 /**
  * 円周上の角度に応じて R->G->B のグラデーション色を返す関数
  * @param {number} angle - 0～2πの範囲の角度（ラジアン）
@@ -223,46 +219,46 @@ async function loadRoads() {
     const response = await fetch(roaddataset);
     const roadData = await response.json();
 
-    const weight = 3;
     L.geoJSON(roadData, {
 
         style: function (feature) {
             const code = Number(feature.properties.N13_006)
-            const h = (code - 1) * 60;
+            const angle = (2 * Math.PI) / 6 * (code - 1);
+            const weight = 3;
             switch (code) {
                 case 1: // 3m未満
                     return {
-                        color: rgb_to_html(pickColor(h)),
+                        color: rgb_to_html(pickColor(angle)),
                         weight: weight
                     };
                 case 2: // 3m-5.5m未満
                     return {
-                        color: rgb_to_html(pickColor(h)),
+                        color: rgb_to_html(pickColor(angle)),
                         weight: weight
                     };
                 case 3: // 5.5m-13m未満
                     return {
-                        color: rgb_to_html(pickColor(h)),
+                        color: rgb_to_html(pickColor(angle)),
                         weight: weight
                     };
                 case 4: // 13m-19.5m未満
                     return {
-                        color: rgb_to_html(pickColor(h)),
+                        color: rgb_to_html(pickColor(angle)),
                         weight: weight
                     };
                 case 5: // 19.5m以上
                     return {
-                        color: rgb_to_html(pickColor(h)),
+                        color: rgb_to_html(pickColor(angle)),
                         weight: weight
                     };
                 case 6: // 未分類
                     return {
-                        color: rgb_to_html(pickColor(h)),
+                        color: rgb_to_html(pickColor(angle)),
                         weight: weight
                     };
                 default:
                     return {
-                        color: rgb_to_html(pickColor(h)),
+                        color: rgb_to_html(pickColor(angle)),
                         weight: weight
                     };
             }
@@ -346,5 +342,3 @@ legend.onAdd = function (map) {
 };
 
 legend.addTo(map);
-
-console.log(`rgb = ${hsv_to_html(180)}`)
