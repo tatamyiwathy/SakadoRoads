@@ -147,49 +147,109 @@ function latlngDistance(lat1, lng1, lat2, lng2) {
         .distanceTo(L.latLng(lat2, lng2));
 }
 
+function distanceToSegment(p, p1, p2) {
+    const dx = p2.x - p1.x;
+    const dy = p2.y - p1.y;
+
+    if (dx === 0 && dy === 0) {
+        return p.distanceTo(p1);
+    }
+
+    const t = Math.max(
+        0,
+        Math.min(
+            1,
+            ((p.x - p1.x) * dx + (p.y - p1.y) * dy) /
+            (dx * dx + dy * dy)
+        )
+    );
+
+    const closest = L.point(
+        p1.x + t * dx,
+        p1.y + t * dy
+    );
+
+    return p.distanceTo(closest);
+}
+
+function distanceToLineString(centerPoint, coordinates) {
+    let minDistance = Infinity;
+
+    for (let i = 0; i < coordinates.length - 1; i++) {
+        const a = map.latLngToLayerPoint(
+            L.latLng(coordinates[i][1], coordinates[i][0])
+        );
+
+        const b = map.latLngToLayerPoint(
+            L.latLng(coordinates[i + 1][1], coordinates[i + 1][0])
+        );
+
+        const distance = distanceToSegment(
+            centerPoint,
+            a,
+            b
+        );
+
+        minDistance = Math.min(minDistance, distance);
+    }
+
+    return minDistance;
+}
+
+function distanceToRoad(center, geometry) {
+    if (geometry.type === "LineString") {
+        return distanceToLineString(
+            center,
+            geometry.coordinates
+        );
+    }
+
+    if (geometry.type === "MultiLineString") {
+        let minDistance = Infinity;
+
+        for (const coordinates of geometry.coordinates) {
+            const distance = distanceToLineString(
+                center,
+                coordinates
+            );
+
+            minDistance = Math.min(
+                minDistance,
+                distance
+            );
+        }
+
+        return minDistance;
+    }
+
+    return Infinity;
+}
+
 // 指定した中心座標に最も近い道路を検索する関数
 function findRoadAtCenter(roadData, center, threshold) {
+    // 中央点をLeaflet座標へ変換
+    const centerPoint = map.latLngToLayerPoint(center);
+
     let nearestRoad = null;
     let nearestDistance = Infinity;
 
     for (const road of roadData.features) {
-        const geometry = road.geometry;
 
-        if (geometry.type === "LineString") {
-            for (const coord of geometry.coordinates) {
-                const distance = latlngDistance(
-                    center.lat,
-                    center.lng,
-                    coord[1],
-                    coord[0]
-                );
+        const distance = distanceToRoad(
+            centerPoint,
+            road.geometry
+        );
 
-                if (distance < nearestDistance) {
-                    nearestDistance = distance;
-                    nearestRoad = road;
-                }
-            }
-        }
-        else if (geometry.type === "MultiLineString") {
-            for (const line of geometry.coordinates) {
-                for (const coord of line) {
-                    const distance = latlngDistance(
-                        center.lat,
-                        center.lng,
-                        coord[1],
-                        coord[0]
-                    );
-
-                    if (distance < nearestDistance) {
-                        nearestDistance = distance;
-                        nearestRoad = road;
-                    }
-                }
-            }
+        if (distance < nearestDistance) {
+            nearestDistance = distance;
+            nearestRoad = road;
         }
     }
+    if (nearestDistance <= threshold) {
+        return nearestRoad;
+    }
 
-    return nearestDistance <= threshold ? nearestRoad : null;
+    return null;
 }
 
 async function loadRoads() {
@@ -337,12 +397,9 @@ main();
 
 //  凡例の表示
 function showLegend() {
-    const legend = L.control({ position: "bottomright" });
+    const div = document.getElementById("road-width-legend");
 
-    legend.onAdd = function (map) {
-        const div = L.DomUtil.create("div", "road-width-legend");
-
-        div.innerHTML = `
+    div.innerHTML = `
             <h4>道路幅</h4>
             <div><span class="color-box" style="background:${rgbToColorCode(pickColor(0))}"></span> ${getRoadWidth(1)}</div>
             <div><span class="color-box" style="background:${rgbToColorCode(pickColor(60))}"></span> ${getRoadWidth(2)}</div>
@@ -351,11 +408,6 @@ function showLegend() {
             <div><span class="color-box" style="background:${rgbToColorCode(pickColor(240))}"></span> ${getRoadWidth(5)}</div>
             <div><span class="color-box" style="background:${rgbToColorCode(pickColor(300))}"></span> ${getRoadWidth(6)}</div>
         `;
-
-        return div;
-    };
-
-    legend.addTo(map);
 }
 
 showLegend();
