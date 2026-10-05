@@ -65,3 +65,25 @@
         pointer-events: none;
     }
 }
+
+#road-info {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    #road-info {
+        display: block;
+        position: absolute;
+        z-index: 1000;
+
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+
+        padding: 12px;
+        background: white;
+        border-radius: 8px;
+
+        font-size: 16px;
+    }
+}

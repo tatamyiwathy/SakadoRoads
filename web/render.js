@@ -62,7 +62,6 @@ function rgbToColorCode(rgba) {
 }
 
 function getRoadType(code) {
-    console.log("Road type code:", code);
     switch (Number(code)) {
         case 1:
             return "通常部";
@@ -282,15 +281,50 @@ async function loadRoads() {
         }
     }).addTo(map);
 
+    return roadData;
 }
 
-function updateCenterRoad() {
-    console.log("Center road updated");
-}
-// 地図が移動するたびに呼ばれる
-map.on("moveend", updateCenterRoad);
 
-loadRoads();
+function updateCenterRoad(roadData, map) {
+    if (!roadData) {
+        return;
+    }
+
+    const center = map.getCenter();
+
+    const road = findRoadAtCenter(
+        roadData,
+        center,
+        20
+    );
+    console.log("Center road:", road);
+    const info = document.getElementById("road-info");
+
+    if (!road) {
+        info.style.display = "none";
+        return;
+    }
+
+    info.style.display = "block";
+
+    const properties = road.properties;
+
+    info.innerHTML = `${showRoadDetails(road)}`;
+}
+
+
+async function main() {
+
+    road = await loadRoads();
+
+    // 地図が移動するたびに呼ばれる
+    map.on("moveend", function () {
+        updateCenterRoad(road, map);
+
+    });
+
+}
+main();
 
 // L.geoJSON(roadData, {
 //     style: function (feature) {
