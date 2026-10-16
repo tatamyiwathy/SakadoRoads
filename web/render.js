@@ -358,7 +358,7 @@ function updateCenterRoad(roadData, map) {
     const road = findRoadAtCenter(
         roadData,
         center,
-        20
+        5
     );
     console.log("Center road:", road);
     const info = document.getElementById("road-info");
