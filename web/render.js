@@ -1,3 +1,6 @@
+// 地図描画および道路情報表示用のスクリプト
+
+
 // 道路データのパス
 const roaddataset = "./resources/sakado_roads.json";
 // 地図の初期化
