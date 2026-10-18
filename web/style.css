@@ -13,28 +13,6 @@
     height: 100dvh;
 }
 
-/* 重ねる矩形のデザイン */
-.map-overlay {
-    position: absolute;
-    top: 2px;
-    /* 上から20pxの位置 */
-    right: 2px;
-    /* 右から2pxの位置 */
-    z-index: 1000;
-    /* 地図より手前に表示（重要） */
-
-    /* 矩形の見た目の装飾（お好みで調整してください） */
-    background-color: rgba(255, 255, 255, 0.9);
-    /* 白背景（少し半透明） */
-    padding: 0px;
-    border-radius: 2px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-    max-width: 350px;
-    color: #333;
-
-    font-size: 12px;
-}
-
 #map-reticle {
     display: none;
 }
@@ -71,14 +49,14 @@
         z-index: 1000;
 
         left: 10px;
-        right: 10px;
+        width: 50%;
         bottom: 10px;
 
         padding: 12px;
         background: white;
         border-radius: 8px;
 
-        font-size: 16px;
+        /* font-size: 16px; */
     }
 }
 
@@ -102,18 +80,16 @@
     margin: 0 0 4px;
 }
 
-#info-btn {
-    position: absolute;
-    bottom: 24px;
-    right: 10px;
-    z-index: 1000;
-}
-
 #info-btn-link {
     display: block;
 }
 
 #info-btn {
+    position: absolute;
+    bottom: 24px;
+    right: 10px;
+    z-index: 1000;
+
     width: 32px;
     height: 32px;
     background-color: white;
