@@ -410,6 +410,13 @@ function showLegend() {
             <div><span class="color-box" style="background:${rgbToColorCode(pickColor(180))}"></span> ${getRoadWidth(4)}</div>
             <div><span class="color-box" style="background:${rgbToColorCode(pickColor(240))}"></span> ${getRoadWidth(5)}</div>
             <div><span class="color-box" style="background:${rgbToColorCode(pickColor(300))}"></span> ${getRoadWidth(6)}</div>
+            <hr>
+            データ出典：
+            <a href="https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N13-2024.html" target="_blank"
+                rel="noopener noreferrer">
+                国土交通省国土数値情報ダウンロードサイト
+            </a>
+
         `;
 }
 

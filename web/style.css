@@ -86,7 +86,7 @@
 #road-width-legend {
     position: absolute;
 
-    right: 10px;
+    left: 10px;
     bottom: 24px;
 
     background: white;
@@ -100,4 +100,22 @@
 
 #road-width-legend h4 {
     margin: 0 0 4px;
+}
+
+#info-btn {
+    position: absolute;
+    bottom: 24px;
+    right: 10px;
+    z-index: 1000;
+}
+
+#info-btn-link {
+    display: block;
+}
+
+#info-btn {
+    width: 32px;
+    height: 32px;
+    background-color: white;
+    border-radius: 4px;
 }
