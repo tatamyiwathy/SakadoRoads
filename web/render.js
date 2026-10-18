@@ -57,11 +57,20 @@ function pickColor(angle) {
     return [b, g, r, 1.0];
 }
 
+// 道路幅コードから角度を計算する関数
+function codeToAngle(code) {
+    return angle = (2 * Math.PI) / 6 * (code - 1);
+}
+
 function rgbToColorCode(rgba) {
     const r = Math.round(rgba[0] * 255);    //B成分をR成分として扱う
     const g = Math.round(rgba[1] * 255);
     const b = Math.round(rgba[2] * 255);
     return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
+}
+
+function codeToColor(code) {
+    return rgbToColorCode(pickColor(codeToAngle(code)))
 }
 
 function getRoadType(code) {
@@ -255,12 +264,6 @@ function findRoadAtCenter(roadData, center, threshold) {
     return null;
 }
 
-// 道路幅コードから角度を計算する関数
-function codeToAngle(code) {
-    return angle = (2 * Math.PI) / 6 * (code - 1);
-}
-
-
 async function loadRoads() {
     const response = await fetch(roaddataset);
     const roadData = await response.json();
@@ -269,42 +272,41 @@ async function loadRoads() {
 
         style: function (feature) {
             const code = Number(feature.properties.N13_006)
-            const angle = codeToAngle(code);
             const weight = 3;
             switch (code) {
                 case 1: // 3m未満
                     return {
-                        color: rgbToColorCode(pickColor(angle)),
+                        color: codeToColor(code),
                         weight: weight
                     };
                 case 2: // 3m-5.5m未満
                     return {
-                        color: rgbToColorCode(pickColor(angle)),
+                        color: codeToColor(code),
                         weight: weight
                     };
                 case 3: // 5.5m-13m未満
                     return {
-                        color: rgbToColorCode(pickColor(angle)),
+                        color: codeToColor(code),
                         weight: weight
                     };
                 case 4: // 13m-19.5m未満
                     return {
-                        color: rgbToColorCode(pickColor(angle)),
+                        color: codeToColor(code),
                         weight: weight
                     };
                 case 5: // 19.5m以上
                     return {
-                        color: rgbToColorCode(pickColor(angle)),
+                        color: codeToColor(code),
                         weight: weight
                     };
                 case 6: // 未分類
                     return {
-                        color: rgbToColorCode(pickColor(angle)),
+                        color: codeToColor(code),
                         weight: weight
                     };
                 default:
                     return {
-                        color: rgbToColorCode(pickColor(angle)),
+                        color: codeToColor(code),
                         weight: weight
                     };
             }
@@ -410,12 +412,12 @@ function showLegend() {
 
     div.innerHTML = `
             <h4>道路幅</h4>
-            <div><span class="color-box" style="background:${rgbToColorCode(pickColor(codeToAngle(1)))}"></span> ${getRoadWidth(1)}</div>
-            <div><span class="color-box" style="background:${rgbToColorCode(pickColor(codeToAngle(2)))}"></span> ${getRoadWidth(2)}</div>
-            <div><span class="color-box" style="background:${rgbToColorCode(pickColor(codeToAngle(3)))}"></span> ${getRoadWidth(3)}</div>
-            <div><span class="color-box" style="background:${rgbToColorCode(pickColor(codeToAngle(4)))}"></span> ${getRoadWidth(4)}</div>
-            <div><span class="color-box" style="background:${rgbToColorCode(pickColor(codeToAngle(5)))}"></span> ${getRoadWidth(5)}</div>
-            <div><span class="color-box" style="background:${rgbToColorCode(pickColor(codeToAngle(6)))}"></span> ${getRoadWidth(6)}</div>
+            <div><span class="color-box" style="background:${codeToColor(1)}"></span> ${getRoadWidth(1)}</div>
+            <div><span class="color-box" style="background:${codeToColor(2)}"></span> ${getRoadWidth(2)}</div>
+            <div><span class="color-box" style="background:${codeToColor(3)}"></span> ${getRoadWidth(3)}</div>
+            <div><span class="color-box" style="background:${codeToColor(4)}"></span> ${getRoadWidth(4)}</div>
+            <div><span class="color-box" style="background:${codeToColor(5)}"></span> ${getRoadWidth(5)}</div>
+            <div><span class="color-box" style="background:${codeToColor(6)}"></span> ${getRoadWidth(6)}</div>
             <hr>
             データ出典：
             <a href="https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N13-2024.html" target="_blank"
