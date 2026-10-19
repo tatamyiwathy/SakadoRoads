@@ -2,7 +2,7 @@
 
 
 // 道路データのパス
-const roaddataset = "./resources/sakado_roads.json";
+const roaddataset = "./data/sakado_roads.json";
 // 地図の初期化
 const map = L.map("map").setView([35.9572819, 139.4004482], 15);
 

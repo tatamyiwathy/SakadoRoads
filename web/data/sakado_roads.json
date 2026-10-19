@@ -1,6 +1,6 @@
 {
 "type": "FeatureCollection",
-"name": "sakado_roads",
+"name": "sakado-road",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::6668" } },
 "features": [
 { "type": "Feature", "properties": { "N13_001": "2020-10-15T00:00:00", "N13_002": "1", "N13_003": "3", "N13_004": "1", "N13_005": 0, "N13_006": "1", "N13_007": "1", "N13_008": "533972" }, "geometry": { "type": "LineString", "coordinates": [ [ 139.324494017, 35.929698124 ], [ 139.32456885, 35.92965229 ], [ 139.324749336, 35.929528156 ] ] } },
