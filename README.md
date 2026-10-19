@@ -10,6 +10,10 @@
 以下のライブラリが必要です。
 - geopandas
 
+```
+python -m venv .venv
+
+```
 ## 道路データのダウンロード
 
 表示したい市町村の道路データを用意します。道路のデータをダウンロードする前に、都道府県の形状のデータをダウンロードします。このデータは、道路が指定の市町村にあるのかどうかの判定に使用します。
@@ -47,14 +51,15 @@
 ```
 (.venv) PS C:\Users\tatam\roaddata> python "C:\Users\tatam\Projects\myproj\SakadoRoads\tools\extract_municipality_shape.py" -i .\N03-20260101_11_GML\N03-20260101_11.geojson -o sakado-shape.json 坂戸市
 坂戸市の形状をsakado-shape.jsonに出力しました
-(.venv) PS C:\Users\tatam\roaddata> python "C:\Users\tatam\Projects\myproj\SakadoRoads\tools\extract_roads_in_municipality.py" -s .\sakado-shape.json -r .\N13-24_5339_GEOJSON\N13-24_5339.geojson -o sakado-road.json
-抽出した道路データを保存しました: sakado-road.json
+(.venv) PS C:\Users\tatam\roaddata> python "C:\Users\tatam\Projects\myproj\SakadoRoads\tools\extract_roads_in_municipality.py" -s .\sakado-shape.json -r .\N13-24_5339_GEOJSON\N13-24_5339.geojson -o sakado_roads.json
+抽出した道路データを保存しました: sakado_roads.json
 ```
-ここでは、埼玉県坂戸市の道路を抽出してsakado-road.jsonファイルに出力しました。
+ここでは、埼玉県坂戸市の道路を抽出してsakado_roads.jsonファイルに出力しました。
+
+出力された```sakado_roads.json```はweb/dataへコピーします。
+
 
 # 抽出したデータの表示
-
-出力されたファイルをweb/dataへコピーします。
 
 ```javascript
 // 道路データのパス
@@ -64,3 +69,9 @@ const map = L.map("map").setView([35.9572819, 139.4004482], 15);
 ```
 
 必要に応じで上記の部分を書き換えてください。```roaddataset```は抽出した道路データのファイルのパスです。二行目の```setView```で最初に表示する経緯度とズームレベルを指定しています。
+
+webディレクトリに移動します。
+以下でhttpサーバーを起動してブラウザで```http://localhost:8000/```を開くと地図が表示されます。
+```
+python -m http.server 8000
+```
