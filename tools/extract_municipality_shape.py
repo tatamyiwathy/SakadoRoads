@@ -2,7 +2,7 @@
 import argparse
 import geopandas as gpd
 
-parser = argparse.ArgumentParser(description="ファイルの入出力を処理するスクリプト")
+parser = argparse.ArgumentParser(description="shp形式のファイルから指定した市区町村の形状を抽出するスクリプト")
 parser.add_argument("municipality", type=str, help="市区町村名")
 
 parser.add_argument("-i", "--input", type=str, help="入力ファイルのパス(shp形式)")
