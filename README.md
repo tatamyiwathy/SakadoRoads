@@ -20,7 +20,8 @@ webページで坂戸市の道路を幅員ごとに色分け表示します。�
 ローカルのhttpサーバーを立ち上げます。
 
 ```
-python -m http.server 8000
+$ cd web
+$ python -m http.server 8000
 ```
 
 ブラウザで```http://localhost:8000/```を開くと地図が表示されます。
