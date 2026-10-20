@@ -10,7 +10,10 @@ const map = L.map("map").setView([35.9572819, 139.4004482], 14);
 L.tileLayer(
     "https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png",
     {
-        attribution: "<a href=\"https://maps.gsi.go.jp/development/ichiran.html\">地理院タイル</a>",
+        attribution: "<a href=\"https://maps.gsi.go.jp/development/ichiran.html\">地理院タイル</a> | データ出展：" +
+            "<a href=\"https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N13-2024.html\" target=\"_blank\" rel=\"noopener noreferrer\">" +
+            "国土交通省国土数値情報ダウンロードサイト" +
+            "</a>",
         opacity: 0.5
 
     }
@@ -383,29 +386,6 @@ function updateCenterRoad(roadData, map) {
     info.innerHTML = `${showRoadDetails(road)}`;
 }
 
-
-async function main() {
-
-    road = await loadRoads();
-
-    // 地図が移動するたびに呼ばれる
-    map.on("moveend", function () {
-        updateCenterRoad(road, map);
-
-    });
-
-}
-main();
-
-// L.geoJSON(roadData, {
-//     style: function (feature) {
-//         return {
-//             color: "#ff0000",
-//             weight: 3
-//         };
-//     }
-// }).addTo(map);     
-
 //  凡例の表示
 function showLegend() {
     const div = document.getElementById("road-width-legend");
@@ -418,15 +398,24 @@ function showLegend() {
             <div><span class="color-box" style="background:${codeToColor(4)}"></span> ${getRoadWidth(4)}</div>
             <div><span class="color-box" style="background:${codeToColor(5)}"></span> ${getRoadWidth(5)}</div>
             <div><span class="color-box" style="background:${codeToColor(6)}"></span> ${getRoadWidth(6)}</div>
-            <hr>
-            データ出典：
-            <a href="https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N13-2024.html" target="_blank"
-                rel="noopener noreferrer">
-                国土交通省国土数値情報ダウンロードサイト
-            </a>
 
         `;
 }
 
-showLegend();
+async function main() {
+
+    road = await loadRoads();
+
+    // 地図が移動するたびに呼ばれる
+    map.on("moveend", function () {
+        updateCenterRoad(road, map);
+
+    });
+
+    showLegend();
+
+}
+main();
+
+
 
