@@ -10,9 +10,9 @@ const map = L.map("map").setView([35.9572819, 139.4004482], 14);
 L.tileLayer(
     "https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png",
     {
-        attribution: "<a href=\"https://maps.gsi.go.jp/development/ichiran.html\">地理院タイル</a> | データ出展：" +
+        attribution: "<a href=\"https://maps.gsi.go.jp/development/ichiran.html\">地理院タイル</a> | " +
             "<a href=\"https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N13-2024.html\" target=\"_blank\" rel=\"noopener noreferrer\">" +
-            "国土交通省国土数値情報ダウンロードサイト" +
+            "「国土数値情報（道路データ）」をもとに作成" +
             "</a>",
         opacity: 0.5
 
