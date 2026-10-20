@@ -96,3 +96,14 @@ python tools/create-road-dataset.py -p 東京都 府中市 road_dataset
 2. 出力されたファイルをweb/dataにコピーします。
 
 3. ```http://localhost:8000/```で確認します。
+
+
+## クレジット・ライセンス
+
+### 使用ライブラリ
+* **Leaflet** - [BSD 2-Clause License](https://github.com)
+
+### 使用データ・地図タイル
+* **地理院タイル** - 国土地理院（[利用規約](https://www.gsi.go.jp/kikakuchousei/kikakuchousei40182.html)）
+* **国土数値情報** - 国土交通省（[利用規約](https://nlftp.mlit.go.jp/ksj/other/agreement.html)）
+  * 本リポジトリに含まれる（または生成される）地理空間データは、国土数値情報のデータを抽出・加工して作成しています。
