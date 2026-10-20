@@ -391,7 +391,7 @@ function showLegend() {
     const div = document.getElementById("road-width-legend");
 
     div.innerHTML = `
-            <h4>道路幅</h4>
+            <h4>幅員凡例</h4>
             <div><span class="color-box" style="background:${codeToColor(1)}"></span> ${getRoadWidth(1)}</div>
             <div><span class="color-box" style="background:${codeToColor(2)}"></span> ${getRoadWidth(2)}</div>
             <div><span class="color-box" style="background:${codeToColor(3)}"></span> ${getRoadWidth(3)}</div>
